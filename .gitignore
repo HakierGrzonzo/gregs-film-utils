@@ -1,3 +1,5 @@
+raw/
+trim_mask.bmp
 *.mp4
 # Byte-compiled / optimized / DLL files
 __pycache__/
