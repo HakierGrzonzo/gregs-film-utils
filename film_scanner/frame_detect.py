@@ -1,6 +1,6 @@
-from film_scanner.image_with_mask import ImageWithMask
 import numpy
 
+from film_scanner.image_with_mask import ImageWithMask
 
 naive_height = 235
 sprocket_height = 78
@@ -8,7 +8,7 @@ threshold = 0.95 * 255
 
 
 def detect_frames(image: ImageWithMask):
-    w, h = image.image.size
+    _w, h = image.image.size
     y = 0
 
     while y < h:

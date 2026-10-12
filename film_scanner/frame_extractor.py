@@ -1,13 +1,15 @@
-from itertools import count, pairwise
-from pathlib import Path
 import subprocess
 import tempfile
+from itertools import count, pairwise
+from logging import getLogger
+from pathlib import Path
 from statistics import median_low
 
 from film_scanner.crop import crop_film
 from film_scanner.frame_detect import detect_frames
-from statistics import median_low
 from film_scanner.image_with_mask import ImageWithMask
+
+logger = getLogger(__name__)
 
 
 def generate_frame_name(tempdir: str):
@@ -23,13 +25,13 @@ class FrameExtractor:
         image = ImageWithMask(path)
 
         crop_film(image)
-        w, h = image.image.size
+        _w, _h = image.image.size
 
         found_maybe_frames = list(detect_frames(image))
         image.trim_mask.save("cut.bmp")
 
         self.images.append((image, found_maybe_frames))
-        print(f"Consumed {path} with {len(found_maybe_frames) * 2} frames")
+        logger.info(f"Consumed {path} with {len(found_maybe_frames) * 2} frames")
 
     def extract_frames(self, framerate: int, output_path: Path):
         frame_heights = []
@@ -48,9 +50,8 @@ class FrameExtractor:
         ) as tempdir:
             frame_names = generate_frame_name(tempdir)
             for image, frame_tops in self.images:
-                w, h = image.image.size
+                w, _h = image.image.size
                 for frame_top, frame_name in zip(frame_tops, frame_names):
-                    print(frame_top)
                     frame = image.image.crop(
                         (w // 2, frame_top, w, frame_top + frame_height)
                     )
@@ -59,9 +60,8 @@ class FrameExtractor:
                     frame.close()
 
             for image, frame_tops in reversed(self.images):
-                w, h = image.image.size
+                w, _h = image.image.size
                 for frame_top, frame_name in zip(reversed(frame_tops), frame_names):
-                    print(frame_top)
                     frame = image.image.crop(
                         (0, frame_top, w // 2, frame_top + frame_height)
                     ).rotate(180)
@@ -69,7 +69,7 @@ class FrameExtractor:
                     frame.save(frame_name)
                     frame.close()
 
-            proc = subprocess.run(
+            subprocess.run(
                 [
                     "ffmpeg",
                     "-framerate",

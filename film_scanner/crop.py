@@ -1,4 +1,3 @@
-from PIL.Image import Image
 import numpy
 
 from .image_with_mask import ImageWithMask
@@ -7,7 +6,7 @@ from .image_with_mask import ImageWithMask
 def crop_film(image: ImageWithMask):
     w, h = image.image.size
 
-    for x in range(0, w):
+    for x in range(w):
         column = image.data[:, x]
         avr = numpy.average(column)
         if avr > 100:

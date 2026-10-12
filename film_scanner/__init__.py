@@ -1,8 +1,8 @@
-from sys import argv
-from film_scanner.frame_extractor import FrameExtractor
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
+from logging import basicConfig
 from pathlib import Path
 
+from film_scanner.frame_extractor import FrameExtractor
 
 how_the_film_should_look = """
 The raw files to be scanned should have this orientation:
@@ -36,11 +36,23 @@ def main():
     )
     parser.add_argument(
         "--output",
+        "-o",
         type=Path,
         help="Path to output the video, defaults to %(default)s",
         default="./concatenated_output.mp4",
     )
+    parser.add_argument(
+        "--verbose",
+        "-v",
+        action="count",
+        default=0,
+        help="Shows more logs, the more Vs, the morer logs",
+    )
     parsed = parser.parse_args()
+
+    log_level = 30 - 10 * parsed.verbose
+
+    basicConfig(level=log_level)
 
     frame_extractor = FrameExtractor()
     for file in parsed.filename:
