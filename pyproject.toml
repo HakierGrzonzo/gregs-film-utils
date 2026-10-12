@@ -12,7 +12,15 @@ dependencies = [
     "numpy (>=2.5.3,<3.0.0)",
 ]
 
+[project.scripts]
+film-scanner = "film_scanner:main"
+
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[dependency-groups]
+dev = [
+    "ruff (>=0.17.0,<0.18.0)"
+]
