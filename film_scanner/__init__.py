@@ -30,6 +30,7 @@ def main():
     )
     parser.add_argument(
         "--framerate",
+        "-r",
         type=int,
         default=12,
         help="Frame rate to output, defaults to %(default)s",

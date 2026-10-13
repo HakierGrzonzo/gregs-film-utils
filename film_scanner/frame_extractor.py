@@ -5,6 +5,8 @@ from logging import getLogger
 from pathlib import Path
 from statistics import median_low
 
+from deskew import determine_skew
+
 from film_scanner.crop import crop_film
 from film_scanner.frame_detect import detect_frames
 from film_scanner.image_with_mask import ImageWithMask
@@ -23,6 +25,11 @@ class FrameExtractor:
 
     def feed(self, path: str):
         image = ImageWithMask(path)
+
+        skew_angle = determine_skew(image.data, max_angle=5, min_angle=-5)
+        if skew_angle is not None and abs(skew_angle) > 0:
+            logger.info(f"Fixing skew on image by {skew_angle:02}deg")
+            image.rotate(skew_angle)
 
         crop_film(image)
         _w, _h = image.image.size
